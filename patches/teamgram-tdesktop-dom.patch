@@ -1,0 +1,307 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 644d1572a..dadd29f9d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -19,8 +19,8 @@ endif()
+ project(Telegram
+     LANGUAGES C CXX
+     VERSION ${desktop_app_version_cmake}
+-    DESCRIPTION "Teamgram Desktop messenger"
+-    HOMEPAGE_URL "https://teamgram.net/desktop"
++    DESCRIPTION "DOM Desktop messenger"
++    HOMEPAGE_URL "https://dom.local"
+ )
+ 
+ if (APPLE)
+diff --git a/Telegram/CMakeLists.txt b/Telegram/CMakeLists.txt
+index 1239dae62..712b81d01 100644
+--- a/Telegram/CMakeLists.txt
++++ b/Telegram/CMakeLists.txt
+@@ -2021,9 +2021,9 @@ else()
+ endif()
+ 
+ if (build_macstore)
+-    set(bundle_identifier "net.teamgram.desktop")
++    set(bundle_identifier "local.dom.desktop")
+     set(bundle_entitlements "Telegram Lite.entitlements")
+-    set(output_name "Teamgram Lite")
++    set(output_name "DOM Lite")
+     target_link_options(Telegram
+     PRIVATE
+         -F${libs_loc}/breakpad/src/client/mac/build/Release
+@@ -2039,12 +2039,12 @@ if (build_macstore)
+     )
+ else()
+     if (CMAKE_GENERATOR STREQUAL Xcode)
+-        set(bundle_identifier "net.teamgram.desktop$<$<CONFIG:Debug>:Debug>")
++        set(bundle_identifier "local.dom.desktop$<$<CONFIG:Debug>:Debug>")
+     else()
+-        set(bundle_identifier "net.teamgram.desktop")
++        set(bundle_identifier "local.dom.desktop")
+     endif()
+     set(bundle_entitlements "Telegram.entitlements")
+-    set(output_name "Teamgram")
++    set(output_name "DOM")
+ endif()
+ 
+ if (CMAKE_GENERATOR STREQUAL Xcode)
+diff --git a/Telegram/Resources/langs/lang.strings b/Telegram/Resources/langs/lang.strings
+index 0aad1a1ca..90bb05de1 100644
+--- a/Telegram/Resources/langs/lang.strings
++++ b/Telegram/Resources/langs/lang.strings
+@@ -28,10 +28,10 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+ 
+ "lng_disable_notifications_from_tray" = "Disable notifications";
+ "lng_enable_notifications_from_tray" = "Enable notifications";
+-"lng_open_from_tray" = "Open Teamgram";
++"lng_open_from_tray" = "Open DOM";
+ "lng_minimize_to_tray" = "Minimize to Tray";
+-"lng_quit_from_tray" = "Quit Teamgram";
+-"lng_tray_icon_text" = "Teamgram is still running here,\nyou can change this in Settings.\nIf it disappears from the tray,\nyou can drag it back from the hidden icons.";
++"lng_quit_from_tray" = "Quit DOM";
++"lng_tray_icon_text" = "DOM is still running here,\nyou can change this in Settings.\nIf it disappears from the tray,\nyou can drag it back from the hidden icons.";
+ 
+ // For lng_month_year or plain month name.
+ "lng_month1" = "January";
+@@ -367,7 +367,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+ "lng_edit_caption_attach" = "Sorry, you can't attach new media while editing a message.";
+ "lng_edit_caption_voice" = "Sorry, you can't edit messages when you have an unsent voice message.";
+ 
+-"lng_intro_about" = "Welcome to the official Teamgram Desktop app.\nIt's fast and secure.";
++"lng_intro_about" = "Welcome to the official DOM Desktop app.\nIt's fast and secure.";
+ "lng_start_msgs" = "Start Messaging";
+ 
+ "lng_intro_next" = "Next";
+@@ -377,8 +377,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+ "lng_photo_caption" = "Caption";
+ "lng_photos_comment" = "Comment";
+ 
+-"lng_intro_qr_title" = "Scan From Mobile Teamgram";
+-"lng_intro_qr_step1" = "Open Teamgram on your phone";
++"lng_intro_qr_title" = "Scan From Mobile DOM";
++"lng_intro_qr_step1" = "Open DOM on your phone";
+ "lng_intro_qr_step2" = "Go to Settings > Devices > Link Desktop Device";
+ "lng_intro_qr_step3" = "Scan this image to Log In";
+ "lng_intro_qr_skip" = "Or log in using your phone number";
+@@ -404,11 +404,11 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+ 
+ "lng_code_ph" = "Code";
+ "lng_code_desc" = "We've sent an activation code to your phone.\nPlease enter it below.";
+-"lng_code_from_telegram" = "A code was sent **via Teamgram** to your other\ndevices, if you have any connected.";
++"lng_code_from_telegram" = "A code was sent **via DOM** to your other\ndevices, if you have any connected.";
+ "lng_code_no_telegram" = "Send code via SMS";
+-"lng_code_call" = "Teamgram will call you in {minutes}:{seconds}";
+-"lng_code_calling" = "Requesting a call from Teamgram...";
+-"lng_code_called" = "Teamgram dialed your number";
++"lng_code_call" = "DOM will call you in {minutes}:{seconds}";
++"lng_code_calling" = "Requesting a call from DOM...";
++"lng_code_called" = "DOM dialed your number";
+ 
+ "lng_bad_phone" = "Invalid phone number. Please try again.";
+ "lng_bad_code" = "You have entered an invalid code.";
+@@ -461,7 +461,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+ "lng_forum_all_messages" = "All Messages";
+ "lng_forum_create_new_topic" = "Create New Thread";
+ "lng_dlg_search_for_messages" = "Search for messages";
+-"lng_update_telegram" = "Update Teamgram";
++"lng_update_telegram" = "Update DOM";
+ "lng_dlg_search_in" = "Search messages in";
+ "lng_dlg_search_from" = "From: {user}";
+ "lng_chat_menu" = "Chat menu";
+@@ -645,9 +645,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+ "lng_settings_title_total_count" = "Total unread count";
+ "lng_settings_native_frame" = "Use system window frame";
+ "lng_settings_qt_frame" = "Use Qt window frame";
+-"lng_settings_auto_start" = "Launch Teamgram when system starts";
++"lng_settings_auto_start" = "Launch DOM when system starts";
+ "lng_settings_start_min" = "Launch minimized";
+-"lng_settings_auto_start_disabled_uwp" = "Starting with the system was disabled in Windows Settings.\n\nPlease enable Teamgram Desktop in the Startup Apps Settings.";
++"lng_settings_auto_start_disabled_uwp" = "Starting with the system was disabled in Windows Settings.\n\nPlease enable DOM Desktop in the Startup Apps Settings.";
+ "lng_settings_open_system_settings" = "Open Settings";
+ "lng_settings_add_sendto" = "Place Teamgram in \"Send to\" menu";
+ "lng_settings_mac_warn_before_quit" = "Show warning before quitting with {text}";
+@@ -1247,7 +1247,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+ "lng_settings_blocked_users" = "Blocked users";
+ "lng_settings_no_blocked_users" = "None";
+ "lng_settings_show_sessions" = "Active sessions";
+-"lng_settings_export_data" = "Export Teamgram data";
++"lng_settings_export_data" = "Export DOM data";
+ "lng_settings_destroy_if" = "If away for...";
+ 
+ "lng_settings_terminate_title" = "Terminate old sessions";
+@@ -1263,10 +1263,10 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+ "lng_settings_ask_sure" = "Please note that Teamgram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlease take a look at the Teamgram FAQ: it has important troubleshooting tips and answers to most questions.";
+ "lng_settings_faq_button" = "Go to FAQ";
+ "lng_settings_ask_ok" = "Ask a Volunteer";
+-"lng_settings_faq" = "Teamgram FAQ";
++"lng_settings_faq" = "DOM FAQ";
+ "lng_settings_faq_subtitle" = "FAQ";
+ "lng_settings_faq_link" = "https://teamgram.net/faq#general-questions";
+-"lng_settings_features" = "Teamgram Features";
++"lng_settings_features" = "DOM Features";
+ "lng_settings_credits" = "My Stars";
+ "lng_settings_currency" = "My TON";
+ "lng_settings_logout" = "Log out";
+diff --git a/Telegram/Resources/winrc/Telegram.rc b/Telegram/Resources/winrc/Telegram.rc
+index e30ad278d..ea61fc6e2 100644
+--- a/Telegram/Resources/winrc/Telegram.rc
++++ b/Telegram/Resources/winrc/Telegram.rc
+@@ -60,11 +60,11 @@ BEGIN
+     BEGIN
+         BLOCK "040904b0"
+         BEGIN
+-            VALUE "CompanyName", "Teamgram FZ-LLC"
+-            VALUE "FileDescription", "Teamgram Desktop"
++            VALUE "CompanyName", "DOM"
++            VALUE "FileDescription", "DOM Desktop"
+             VALUE "FileVersion", "6.6.4.0"
+             VALUE "LegalCopyright", "Copyright (C) 2014-2026"
+-            VALUE "ProductName", "Teamgram Desktop"
++            VALUE "ProductName", "DOM Desktop"
+             VALUE "ProductVersion", "6.6.4.0"
+         END
+     END
+diff --git a/Telegram/Resources/winrc/Updater.rc b/Telegram/Resources/winrc/Updater.rc
+index d74a27dcc..8268b5957 100644
+--- a/Telegram/Resources/winrc/Updater.rc
++++ b/Telegram/Resources/winrc/Updater.rc
+@@ -51,11 +51,11 @@ BEGIN
+     BEGIN
+         BLOCK "040904b0"
+         BEGIN
+-            VALUE "CompanyName", "Telegram FZ-LLC"
+-            VALUE "FileDescription", "Telegram Desktop Updater"
++            VALUE "CompanyName", "DOM"
++            VALUE "FileDescription", "DOM Desktop Updater"
+             VALUE "FileVersion", "6.6.4.0"
+             VALUE "LegalCopyright", "Copyright (C) 2014-2026"
+-            VALUE "ProductName", "Telegram Desktop"
++            VALUE "ProductName", "DOM Desktop"
+             VALUE "ProductVersion", "6.6.4.0"
+         END
+     END
+diff --git a/Telegram/SourceFiles/mtproto/mtproto_dc_options.cpp b/Telegram/SourceFiles/mtproto/mtproto_dc_options.cpp
+index 307a74566..ae07af3e0 100644
+--- a/Telegram/SourceFiles/mtproto/mtproto_dc_options.cpp
++++ b/Telegram/SourceFiles/mtproto/mtproto_dc_options.cpp
+@@ -80,11 +80,11 @@ t6N/byY9Nw9p21Og3AoXSL2q/2IJ1WRUhebgAdGVMlV1fkuOQoEzR7EdpqtQD9Cs\n\
+ -----END RSA PUBLIC KEY-----" };
+ **/
+ const BuiltInDc kBuiltInDcs[] = {
+-    { 1, "43.155.11.190" , 10443 },
++    { 1, "127.0.0.1" , 10443 },
+ };
+ 
+ const BuiltInDc kBuiltInDcsTest[] = {
+-    { 1, "43.155.11.190" , 10443 },
++    { 1, "127.0.0.1" , 10443 },
+ };
+ 
+ const char *kTestPublicRSAKeys[] = { "\
+diff --git a/Telegram/build/build.bat b/Telegram/build/build.bat
+index 5c26c7237..a4ba92ac1 100644
+--- a/Telegram/build/build.bat
++++ b/Telegram/build/build.bat
+@@ -126,7 +126,7 @@ if %Build64% neq 0 (
+ set "ReleasePath=%SolutionPath%\Release"
+ set "DeployPath=%ReleasePath%\deploy\%AppVersionStrMajor%\%AppVersionStrFull%"
+ set "SignPath=%HomePath%\..\..\DesktopPrivate\Sign.bat"
+-set "BinaryName=Telegram"
++set "BinaryName=DOM"
+ set "DropboxSymbolsPath=Y:\Telegram\symbols"
+ set "DropboxSymbolsPathFallback=%HomePath%\..\..\Dropbox\Telegram\symbols"
+ set "FinalReleasePath=Z:\Projects\backup\tdesktop"
+diff --git a/Telegram/build/prepare/prepare.py b/Telegram/build/prepare/prepare.py
+index 5ebba95be..bc721062e 100644
+--- a/Telegram/build/prepare/prepare.py
++++ b/Telegram/build/prepare/prepare.py
+@@ -464,6 +464,40 @@ win:
+     powershell -Command "iwr -OutFile ./msys64.exe https://github.com/msys2/msys2-installer/releases/download/2025-08-30/msys2-base-x86_64-20250830.sfx.exe"
+     msys64.exe
+     del msys64.exe
++    > msys64\\etc\\pacman.d\\mirrorlist.msys (
++        echo Server = https://repo.msys2.org/msys/$arch/
++        echo Server = https://mirror.msys2.org/msys/$arch/
++    )
++    > msys64\\etc\\pacman.d\\mirrorlist.mingw32 (
++        echo Server = https://repo.msys2.org/mingw/i686/
++        echo Server = https://mirror.msys2.org/mingw/i686/
++    )
++    > msys64\\etc\\pacman.d\\mirrorlist.mingw64 (
++        echo Server = https://repo.msys2.org/mingw/x86_64/
++        echo Server = https://mirror.msys2.org/mingw/x86_64/
++    )
++    > msys64\\etc\\pacman.d\\mirrorlist.ucrt64 (
++        echo Server = https://repo.msys2.org/mingw/ucrt64/
++        echo Server = https://mirror.msys2.org/mingw/ucrt64/
++    )
++    > msys64\\etc\\pacman.d\\mirrorlist.clang64 (
++        echo Server = https://repo.msys2.org/mingw/clang64/
++        echo Server = https://mirror.msys2.org/mingw/clang64/
++    )
++    > msys64\\etc\\pacman.d\\mirrorlist.mingw (
++        echo [mingw32]
++        echo Include = /etc/pacman.d/mirrorlist.mingw32
++        echo.
++        echo [mingw64]
++        echo Include = /etc/pacman.d/mirrorlist.mingw64
++        echo.
++        echo [ucrt64]
++        echo Include = /etc/pacman.d/mirrorlist.ucrt64
++        echo.
++        echo [clang64]
++        echo Include = /etc/pacman.d/mirrorlist.clang64
++    )
++    >> msys64\\etc\\pacman.conf echo DisableDownloadTimeout
+ 
+     bash -c "pacman-key --init; pacman-key --populate; pacman -Syu --noconfirm"
+     pacman -Syu --noconfirm ^
+diff --git a/Telegram/build/setup.iss b/Telegram/build/setup.iss
+index 5c304b572..fb26aee97 100644
+--- a/Telegram/build/setup.iss
++++ b/Telegram/build/setup.iss
+@@ -1,8 +1,8 @@
+-#define MyAppShortName "Telegram"
+-#define MyAppName "Telegram Desktop"
+-#define MyAppPublisher "Telegram FZ-LLC"
+-#define MyAppURL "https://desktop.telegram.org"
+-#define MyAppExeName "Telegram.exe"
++#define MyAppShortName "DOM"
++#define MyAppName "DOM Desktop"
++#define MyAppPublisher "DOM"
++#define MyAppURL "https://dom.local"
++#define MyAppExeName "DOM.exe"
+ #define MyAppId "53F49750-6209-4FBF-9CA8-7A333C87D1ED"
+ #define CurrentYear GetDateTimeString('yyyy','','')
+ 
+@@ -24,7 +24,7 @@ AllowNoIcons=yes
+ OutputDir={#ReleasePath}
+ SetupIconFile={#SourcePath}..\Resources\art\icon256.ico
+ UninstallDisplayName={#MyAppName}
+-UninstallDisplayIcon={app}\Telegram.exe
++UninstallDisplayIcon={app}\{#MyAppExeName}
+ Compression=lzma
+ SolidCompression=yes
+ DisableStartupPrompt=yes
+@@ -70,7 +70,7 @@ Name: "ua";      MessagesFile: "compiler:Languages\Ukrainian.isl"
+ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
+ 
+ [Files]
+-Source: "{#ReleasePath}\Telegram.exe"; DestDir: "{app}"; Flags: ignoreversion
++Source: "{#ReleasePath}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+ Source: "{#ReleasePath}\Updater.exe"; DestDir: "{app}"; Flags: ignoreversion
+ #if MyBuildTarget != "winarm"
+ Source: "{#ReleasePath}\{#ModulesFolder}\d3d\d3dcompiler_47.dll"; DestDir: "{app}\{#ModulesFolder}\d3d"; Flags: ignoreversion
+diff --git a/Telegram/build/test_package.bat b/Telegram/build/test_package.bat
+index bec56f831..e4556baea 100644
+--- a/Telegram/build/test_package.bat
++++ b/Telegram/build/test_package.bat
+@@ -17,7 +17,7 @@ set "SignAppxPath=%HomePath%\..\..\DesktopPrivate\AppxSign.bat"
+ set "ResourcesPath=%HomePath%\Resources"
+ set "SolutionPath=%HomePath%\.."
+ set "ReleasePath=%HomePath%\..\out\Debug"
+-set "BinaryName=Telegram"
++set "BinaryName=DOM"
+ 
+ if exist %ReleasePath%\AppX\ (
+   echo Result folder out\Debug\AppX already exists!

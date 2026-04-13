@@ -1,0 +1,11 @@
+{
+  "client": {
+    "repo": "https://github.com/teamgram/teamgram-tdesktop.git",
+    "commit": "8ff2f04f6352986cbb69a0036b5f09d0804edebf",
+    "patch": "patches/teamgram-tdesktop-dom.patch"
+  },
+  "server": {
+    "repo": "https://github.com/teamgram/teamgram-server.git",
+    "commit": "a7048e76a8d8f1dcf353c3166fe74f760b12551d"
+  }
+}
