@@ -30,6 +30,12 @@ powershell -ExecutionPolicy Bypass -File .\start-dom-server.ps1
 powershell -ExecutionPolicy Bypass -File .\build-dom-client.ps1
 ```
 
+Or run the full local stack bootstrap in one command:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build-full-dom.ps1
+```
+
 ## Current client patch
 
 The patch currently does these minimum changes:
