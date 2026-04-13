@@ -1,0 +1,278 @@
+diff --git a/src/build/common.gypi b/src/build/common.gypi
+index 29990c65..60b1a015 100644
+--- a/src/build/common.gypi
++++ b/src/build/common.gypi
+@@ -123,8 +123,8 @@
+     # Chrome normally builds with the Mac OS X 10.5 SDK and sets the
+     # deployment target to 10.5.  Other projects, such as O3D, may override
+     # these defaults.
+-    'mac_sdk%': '10.5',
+-    'mac_deployment_target%': '10.5',
++    'mac_sdk%': '10.13',
++    'mac_deployment_target%': '10.13',
+ 
+     # Set to 1 to enable code coverage.  In addition to build changes
+     # (e.g. extra CFLAGS), also creates a new target in the src/chrome
+@@ -392,6 +392,29 @@
+           'NO_TCMALLOC',
+         ],
+       },
++      'ARM64_Base': {
++        'abstract': 1,
++        'msvs_configuration_platform': 'ARM64',
++        'msvs_settings': {
++          'VCLinkerTool': {
++            'TargetMachine': '4', # ARM64
++            'AdditionalLibraryDirectories!':
++              ['<(DEPTH)/third_party/platformsdk_win7/files/Lib'],
++            'AdditionalLibraryDirectories':
++              ['<(DEPTH)/third_party/platformsdk_win7/files/Lib/ARM64'],
++          },
++          'VCLibrarianTool': {
++            'AdditionalLibraryDirectories!':
++              ['<(DEPTH)/third_party/platformsdk_win7/files/Lib'],
++            'AdditionalLibraryDirectories':
++              ['<(DEPTH)/third_party/platformsdk_win7/files/Lib/ARM64'],
++          },
++        },
++        'defines': [
++          # Not sure if tcmalloc works on Windows on ARM.
++          'NO_TCMALLOC',
++        ],
++      },
+       'Debug_Base': {
+         'abstract': 1,
+         'xcode_settings': {
+@@ -531,6 +554,15 @@
+           'Purify_x64': {
+             'inherit_from': ['Common_Base', 'x64_Base', 'Release_Base', 'Purify_Base'],
+           },
++          'Debug_ARM64': {
++            'inherit_from': ['Common_Base', 'ARM64_Base', 'Debug_Base'],
++          },
++          'Release_ARM64': {
++            'inherit_from': ['Common_Base', 'ARM64_Base', 'Release_Base'],
++          },
++          'Purify_ARM64': {
++            'inherit_from': ['Common_Base', 'ARM64_Base', 'Release_Base', 'Purify_Base'],
++          },
+         }],
+       ],
+     },
+@@ -850,8 +882,9 @@
+           'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES',      # -fvisibility=hidden
+           'GCC_THREADSAFE_STATICS': 'NO',           # -fno-threadsafe-statics
+           'GCC_TREAT_WARNINGS_AS_ERRORS': 'YES',    # -Werror
+-          'GCC_VERSION': '4.2',
++          'GCC_VERSION': '',
+           'GCC_WARN_ABOUT_MISSING_NEWLINE': 'YES',  # -Wnewline-eof
++          'CLANG_CXX_LANGUAGE_STANDARD': 'gnu++14',
+           # MACOSX_DEPLOYMENT_TARGET maps to -mmacosx-version-min
+           'MACOSX_DEPLOYMENT_TARGET': '<(mac_deployment_target)',
+           'PREBINDING': 'NO',                       # No -Wl,-prebind
+@@ -973,6 +1006,9 @@
+               'dwmapi.dll',
+               'uxtheme.dll',
+             ],
++            'AdditionalDependencies': [
++              'delayimp.lib',
++            ],
+           },
+         },
+         'configurations': {
+@@ -1002,6 +1038,19 @@
+               },
+             },
+           },
++          'ARM64_Base': {
++            'msvs_settings': {
++              'VCLinkerTool': {
++                'AdditionalOptions': [
++                  # safeseh is not compatible with ARM64
++                  '/dynamicbase',
++                  '/ignore:4199',
++                  '/ignore:4221',
++                  '/nxcompat',
++                ],
++              },
++            },
++          },
+         },
+       },
+     }],
+@@ -1027,7 +1076,7 @@
+     # setting sets the SDK on a project-wide basis.  In order to get the
+     # configured SDK to show properly in the Xcode UI, SDKROOT must be set
+     # here at the project level.
+-    'SDKROOT': 'macosx<(mac_sdk)',  # -isysroot
++    'SDKROOT': 'macosx',  # -isysroot
+ 
+     # The Xcode generator will look for an xcode_settings section at the root
+     # of each dict and use it to apply settings on a file-wide basis.  Most
+diff --git a/src/build/gyp_breakpad b/src/build/gyp_breakpad
+index 0b8077d2..8397d366 100755
+--- a/src/build/gyp_breakpad
++++ b/src/build/gyp_breakpad
+@@ -41,7 +41,7 @@ import gyp
+ def run_gyp(args):
+   rc = gyp.main(args)
+   if rc != 0:
+-    print 'Error running GYP'
++    print('Error running GYP')
+     sys.exit(rc)
+ 
+ 
+@@ -57,7 +57,7 @@ def main():
+   # Set the GYP DEPTH variable to the root of the project.
+   args.append('--depth=' + os.path.relpath(breakpad_root))
+ 
+-  print 'Updating projects from gyp files...'
++  print('Updating projects from gyp files...')
+   sys.stdout.flush()
+ 
+   run_gyp(args)
+diff --git a/src/client/mac/Breakpad.xcodeproj/project.pbxproj b/src/client/mac/Breakpad.xcodeproj/project.pbxproj
+index ed782c91..b3ccc4e8 100644
+--- a/src/client/mac/Breakpad.xcodeproj/project.pbxproj
++++ b/src/client/mac/Breakpad.xcodeproj/project.pbxproj
+@@ -2198,6 +2198,7 @@
+ 			buildSettings = {
+ 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+ 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
++				MACOSX_DEPLOYMENT_TARGET = 10.13;
+ 				SDKROOT = macosx;
+ 			};
+ 			name = Debug;
+@@ -2208,6 +2209,7 @@
+ 			buildSettings = {
+ 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+ 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
++				MACOSX_DEPLOYMENT_TARGET = 10.13;
+ 			};
+ 			name = Release;
+ 		};
+@@ -2524,6 +2526,7 @@
+ 			buildSettings = {
+ 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+ 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
++				MACOSX_DEPLOYMENT_TARGET = 10.13;
+ 			};
+ 			name = "Debug With Code Coverage";
+ 		};
+diff --git a/src/common/common.gyp b/src/common/common.gyp
+index c1dbb0fe..fcec1514 100644
+--- a/src/common/common.gyp
++++ b/src/common/common.gyp
+@@ -163,6 +163,8 @@
+         'memory_range.h',
+         'module.cc',
+         'module.h',
++        'path_helper.cc',
++        'path_helper.h',
+         'scoped_ptr.h',
+         'simple_string_dictionary.cc',
+         'simple_string_dictionary.h',
+diff --git a/src/common/dwarf/functioninfo.cc b/src/common/dwarf/functioninfo.cc
+index 57f843bb..a8aabb83 100644
+--- a/src/common/dwarf/functioninfo.cc
++++ b/src/common/dwarf/functioninfo.cc
+@@ -61,13 +61,13 @@ void CULineInfoHandler::DefineDir(const string& name, uint32_t dir_num) {
+ }
+ 
+ void CULineInfoHandler::DefineFile(const string& name,
+-                                   int32 file_num, uint32_t dir_num,
++                                   int32_t file_num, uint32_t dir_num,
+                                    uint64_t mod_time, uint64_t length) {
+   assert(dir_num >= 0);
+   assert(dir_num < dirs_->size());
+ 
+   // These should never come out of order, actually.
+-  if (file_num == (int32)files_->size() || file_num == -1) {
++  if (file_num == (int32_t)files_->size() || file_num == -1) {
+     string dir = dirs_->at(dir_num);
+ 
+     SourceFileInfo s;
+@@ -162,7 +162,7 @@ void CUFunctionInfoHandler::ProcessAttributeUnsigned(uint64_t offset,
+ 
+     scoped_ptr<LineInfo> lireader(new LineInfo(iter->second.first + data,
+                                                iter->second.second  - data,
+-                                               reader_, linehandler_));
++                                               reader_, nullptr, 0, nullptr, 0, linehandler_));
+     lireader->Start();
+   } else if (current_function_info_) {
+     switch (attr) {
+diff --git a/src/common/dwarf/functioninfo.h b/src/common/dwarf/functioninfo.h
+index a6f05af6..35041500 100644
+--- a/src/common/dwarf/functioninfo.h
++++ b/src/common/dwarf/functioninfo.h
+@@ -69,8 +69,8 @@ struct SourceFileInfo {
+   uint64_t lowpc;
+ };
+ 
+-typedef std::map<uint64, FunctionInfo*> FunctionMap;
+-typedef std::map<uint64, std::pair<string, uint32> > LineMap;
++typedef std::map<uint64_t, FunctionInfo*> FunctionMap;
++typedef std::map<uint64_t, std::pair<string, uint32_t> > LineMap;
+ 
+ // This class is a basic line info handler that fills in the dirs,
+ // file, and linemap passed into it with the data produced from the
+@@ -90,7 +90,7 @@ class CULineInfoHandler: public LineInfoHandler {
+ 
+   // Called when we define a filename.  We just place
+   // concat(dirs_[DIR_NUM], NAME) into files_ at position FILE_NUM.
+-  virtual void DefineFile(const string& name, int32 file_num,
++  virtual void DefineFile(const string& name, int32_t file_num,
+                           uint32_t dir_num, uint64_t mod_time, uint64_t length);
+ 
+ 
+diff --git a/src/common/windows/guid_string.h b/src/common/windows/guid_string.h
+index 48a5c1d3..fbd84d48 100644
+--- a/src/common/windows/guid_string.h
++++ b/src/common/windows/guid_string.h
+@@ -35,6 +35,19 @@
+ #include <guiddef.h>
+ 
+ #include <string>
++#include <memory>
++
++#if !defined(_WIN64)
++#ifdef UNW_FLAG_EHANDLER
++#undef UNW_FLAG_EHANDLER
++#endif // UNW_FLAG_EHANDLER
++#ifdef UNW_FLAG_UHANDLER
++#undef UNW_FLAG_UHANDLER
++#endif // UNW_FLAG_UHANDLER
++#ifdef UNW_FLAG_CHAININFO
++#undef UNW_FLAG_CHAININFO
++#endif // UNW_FLAG_CHAININFO
++#endif
+ 
+ namespace google_breakpad {
+ 
+diff --git a/src/tools/mac/dump_syms/dump_syms.xcodeproj/project.pbxproj b/src/tools/mac/dump_syms/dump_syms.xcodeproj/project.pbxproj
+index 5b644e24..1874d6e2 100644
+--- a/src/tools/mac/dump_syms/dump_syms.xcodeproj/project.pbxproj
++++ b/src/tools/mac/dump_syms/dump_syms.xcodeproj/project.pbxproj
+@@ -1663,6 +1663,10 @@
+ 			buildSettings = {
+ 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_MACH_O_NLIST_H;
+ 				GCC_VERSION = "";
++				OTHER_CPLUSPLUSFLAGS = (
++					"$(OTHER_CFLAGS)",
++					"-Wno-deprecated-declarations",
++				);
+ 				PRODUCT_NAME = dump_syms;
+ 			};
+ 			name = Release;
+diff --git a/src/tools/windows/dump_syms/dump_syms.cc b/src/tools/windows/dump_syms/dump_syms.cc
+index 1b1797dc..0211ae6e 100644
+--- a/src/tools/windows/dump_syms/dump_syms.cc
++++ b/src/tools/windows/dump_syms/dump_syms.cc
+@@ -34,6 +34,7 @@
+ #include <wchar.h>
+ 
+ #include <string>
++#include <memory>
+ 
+ #include "common/windows/pdb_source_line_writer.h"
+ #include "common/windows/pe_source_line_writer.h"
